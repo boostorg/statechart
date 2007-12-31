@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////////////////////
-// Copyright 2002-2006 Andreas Huber Doenni
+// Copyright 2002-2007 Andreas Huber Doenni
 // Distributed under the Boost Software License, Version 1.0. (See accompany-
 // ing file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //////////////////////////////////////////////////////////////////////////////
@@ -46,17 +46,10 @@
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 
-#ifdef BOOST_MSVC
-#  pragma warning( push )
-#  pragma warning( disable: 4127 ) // conditional expression is constant
-#  pragma warning( disable: 4251 ) // class needs to have dll-interface
-#  pragma warning( disable: 4275 ) // non-dll class used as base for dll class
-#  pragma warning( disable: 4800 ) // forcing value to bool 'true' or 'false'
-#endif
-
 #ifdef BOOST_HAS_THREADS
 #  include <boost/thread/thread.hpp>
 #endif
+
 #ifdef CUSTOMIZE_MEMORY_MANAGEMENT
 #  ifdef BOOST_HAS_THREADS
      // for some reason the following is not automatically defined
@@ -66,11 +59,17 @@
 #  else
 #    define BOOST_NO_MT
 #  endif
-#  include <boost/pool/pool_alloc.hpp>
-#endif
 
-#ifdef BOOST_MSVC
-#  pragma warning( pop )
+#  ifdef BOOST_MSVC
+#    pragma warning( push )
+#    pragma warning( disable: 4127 ) // conditional expression is constant
+#  endif
+
+#  include <boost/pool/pool_alloc.hpp>
+
+#  ifdef BOOST_MSVC
+#    pragma warning( pop )
+#  endif
 #endif
 
 #include <iostream>
@@ -132,10 +131,7 @@ struct Player : sc::asynchronous_state_machine<
   Player, Waiting, MyScheduler, MyAllocator >
 {
   public:
-    Player( 
-      my_context ctx,
-      unsigned int maxNoOfReturns
-    ) :
+    Player( my_context ctx, unsigned int maxNoOfReturns ) :
       my_base( ctx ),
       maxNoOfReturns_( maxNoOfReturns )
     {
