@@ -1,7 +1,7 @@
 #ifndef BOOST_STATECHART_PROCESSOR_CONTAINER_HPP_INCLUDED
 #define BOOST_STATECHART_PROCESSOR_CONTAINER_HPP_INCLUDED
 //////////////////////////////////////////////////////////////////////////////
-// Copyright 2002-2006 Andreas Huber Doenni
+// Copyright 2002-2008 Andreas Huber Doenni
 // Distributed under the Boost Software License, Version 1.0. (See accompany-
 // ing file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //////////////////////////////////////////////////////////////////////////////
@@ -69,6 +69,9 @@ class processor_container : noncopyable
       #if BOOST_WORKAROUND( BOOST_INTEL, BOOST_TESTED_AT( 800 ) )
       private:
       #endif
+
+        // avoids C4512 (assignment operator could not be generated)
+        processor_context & operator=( const processor_context & );
 
         Scheduler & scheduler_;
         const processor_handle handle_;
