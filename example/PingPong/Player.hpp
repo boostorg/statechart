@@ -74,7 +74,25 @@ typedef std::allocator< void > MyAllocator;
 typedef sc::fifo_scheduler<> MyScheduler;
 #endif
 
+
+//////////////////////////////////////////////////////////////////////////////
+struct Player;
 struct Waiting;
+
+namespace boost
+{
+namespace statechart
+{
+  // The following class member specialization ensures that
+  // state_machine<>::initiate is not instantiated at a point where Waiting
+  // is not defined yet.
+  template<>
+  inline void asynchronous_state_machine<
+    Player, Waiting, MyScheduler, MyAllocator >::initiate_impl() {}
+}
+}
+
+
 struct Player : sc::asynchronous_state_machine<
   Player, Waiting, MyScheduler, MyAllocator >
 {
@@ -102,14 +120,6 @@ struct Player : sc::asynchronous_state_machine<
     static unsigned int totalNoOfProcessedEvents_;
     const unsigned int maxNoOfReturns_;
 };
-
-
-// The following class member specialization ensures that
-// state_machine<>::initiate is not instantiated at a point where Waiting
-// is not defined yet.
-template<>
-void sc::asynchronous_state_machine<
-  Player, Waiting, MyScheduler, MyAllocator >::initiate_impl() {}
 
 
 
