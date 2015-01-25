@@ -73,7 +73,6 @@ int test_main( int, char* [] )
   machine.process_event( ev3to4_2() );
   machine.process_event( ev1to2() );
   BOOST_REQUIRE( machine.state_cast< const s4_1 * >() != 0 );
-
   machine.initiate();
   machine.process_event( ev3to4_1() );
   machine.process_event( ev3to4_2() );
