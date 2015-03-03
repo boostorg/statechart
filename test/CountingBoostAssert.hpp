@@ -8,13 +8,9 @@
 
 
 
-#include <string>
-#include <stdexcept>
-
-
-
 #define BOOST_ENABLE_ASSERT_HANDLER
 
+unsigned int sc_assert_failure_count(0U);
 
 
 namespace boost
@@ -22,12 +18,9 @@ namespace boost
 
 
 void assertion_failed(
-  char const * expr, char const * func, char const * file, long )
+  char const *, char const *, char const *, long )
 {
-  throw std::logic_error(
-    std::string( "\nAssertion failed: \"" ) + expr + "\"\n" +
-    "File: \"" + file + "\"\n" +
-    "Function: \"" + func + "\"\n" );
+  ++sc_assert_failure_count;
 }
 
 

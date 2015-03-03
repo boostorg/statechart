@@ -6,12 +6,10 @@
 
 
 
-#include <libs/statechart/test/ThrowingBoostAssert.hpp>
+#include "CountingBoostAssert.hpp"
 #include <boost/statechart/result.hpp>
 
 #include <boost/test/test_tools.hpp>
-
-#include <stdexcept> // std::logic_error
 
 
 
@@ -29,14 +27,13 @@ void make_unconsumed_result()
   sc::detail::result_utility::make_result( sc::detail::do_discard_event );
 }
 
-// TODO: The current test setup lets an exception propagate out of a
-// destructor. Find a better way to test this.
 int test_main( int, char* [] )
 {
+  make_unconsumed_result();
   #ifdef NDEBUG
-    BOOST_REQUIRE_NO_THROW( make_unconsumed_result() );
+    BOOST_REQUIRE_EQUAL( sc_assert_failure_count, 0U );
   #else
-    BOOST_REQUIRE_THROW( make_unconsumed_result(), std::logic_error );
+    BOOST_REQUIRE_EQUAL( sc_assert_failure_count, 1U );
   #endif
 
   return 0;
