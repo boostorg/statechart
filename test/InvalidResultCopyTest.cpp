@@ -6,7 +6,7 @@
 
 
 
-#include <libs/statechart/test/ThrowingBoostAssert.hpp>
+#include "CountingBoostAssert.hpp"
 #include <boost/statechart/state_machine.hpp>
 #include <boost/statechart/event.hpp>
 #include <boost/statechart/simple_state.hpp>
@@ -14,8 +14,6 @@
 #include <boost/statechart/result.hpp>
 
 #include <boost/test/test_tools.hpp>
-
-#include <stdexcept> // std::logic_error
 
 namespace sc = boost::statechart;
 
@@ -51,11 +49,13 @@ int test_main( int, char* [] )
 {
   InvalidResultCopyTest machine;
   machine.initiate();
+  BOOST_REQUIRE_EQUAL( sc_assert_failure_count, 0U );
 
+  machine.process_event( E() );
   #ifdef NDEBUG
-    BOOST_REQUIRE_NO_THROW( machine.process_event( E() ) );
+    BOOST_REQUIRE_EQUAL( sc_assert_failure_count, 0U );
   #else
-    BOOST_REQUIRE_THROW( machine.process_event( E() ), std::logic_error );
+    BOOST_REQUIRE_EQUAL( sc_assert_failure_count, 2U );
   #endif
 
   return 0;
