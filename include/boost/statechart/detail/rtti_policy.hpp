@@ -11,9 +11,11 @@
 #include <boost/assert.hpp>
 #include <boost/config.hpp> // BOOST_MSVC
 #include <boost/detail/workaround.hpp>
+#if !defined(BOOST_STATECHART_USE_NATIVE_RTTI)
+#include <boost/type_index/ctti_type_index.hpp>
+#endif
 
 #include <typeinfo> // std::type_info
-
 
 
 namespace boost
@@ -24,10 +26,12 @@ namespace detail
 {
 
 
+#if !defined(BOOST_STATECHART_USE_NATIVE_RTTI)
 
 //////////////////////////////////////////////////////////////////////////////
 struct id_provider
 {
+  const boost::typeindex::ctti_type_index::type_info_t* const pTypeInfo;
   const void * pCustomId_;
   #if defined( BOOST_ENABLE_ASSERT_HANDLER ) || !defined( NDEBUG )
   const std::type_info * pCustomIdType_;
@@ -41,8 +45,14 @@ struct id_holder
 };
 
 template< class MostDerived >
-id_provider id_holder< MostDerived >::idProvider_;
+id_provider id_holder< MostDerived >::idProvider_ =
+{
+  &boost::typeindex::ctti_type_index::type_id< MostDerived >().type_info(),
+  0,
+  0
+};
 
+#endif // !defined(BOOST_STATECHART_USE_NATIVE_RTTI)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -76,8 +86,8 @@ struct rtti_policy
 
   typedef bool id_provider_type; // dummy
   #else
-  typedef const void * id_type;
-  typedef const id_provider * id_provider_type;
+  typedef boost::typeindex::ctti_type_index id_type;
+  typedef const id_provider* id_provider_type;
   #endif
 
   ////////////////////////////////////////////////////////////////////////////
@@ -93,7 +103,7 @@ struct rtti_policy
         #ifdef BOOST_STATECHART_USE_NATIVE_RTTI
         return id_type( typeid( *this ) );
         #else
-        return idProvider_;
+        return id_type( *idProvider_->pTypeInfo );
         #endif
       }
 
@@ -113,24 +123,12 @@ struct rtti_policy
       rtti_base_type( id_provider_type ) {}
 
       ////////////////////////////////////////////////////////////////////////
-      #if BOOST_WORKAROUND( __GNUC__, BOOST_TESTED_AT( 4 ) )
-      // We make the destructor virtual for GCC because with this compiler
-      // there is currently no way to disable the "has virtual functions but
-      // non-virtual destructor" warning on a class by class basis. Although
-      // it can be done on the compiler command line with
-      // -Wno-non-virtual-dtor, this is undesirable as this would also
-      // suppress legitimate warnings for types that are not states.
-      virtual ~rtti_base_type() {}
-      #else
-      ~rtti_base_type() {}
-      #endif
-
-    private:
-      ////////////////////////////////////////////////////////////////////////
       // For typeid( *this ) to return a value that corresponds to the most-
       // derived type, we need to have a vptr. Since this type does not
       // contain any virtual functions we need to artificially declare one so.
-      virtual void dummy() {}
+      // A virtual destructor will do.
+      virtual ~rtti_base_type() {}
+
     #else
       rtti_base_type(
         id_provider_type idProvider
@@ -158,7 +156,7 @@ struct rtti_policy
         #ifdef BOOST_STATECHART_USE_NATIVE_RTTI
         return id_type( typeid( const MostDerived ) );
         #else
-        return &id_holder< MostDerived >::idProvider_;
+        return boost::typeindex::ctti_type_index::type_id< MostDerived >();
         #endif
       }
 
@@ -202,7 +200,6 @@ struct rtti_policy
 } // namespace detail
 } // namespace statechart
 } // namespace boost
-
 
 
 #endif
