@@ -1,0 +1,31 @@
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+import project ;
+
+project /boost/statechart
+    : common-requirements
+        <source>/boost/assert//boost_assert
+        <source>/boost/bind//boost_bind
+        <source>/boost/config//boost_config
+        <source>/boost/conversion//boost_conversion
+        <source>/boost/core//boost_core
+        <source>/boost/detail//boost_detail
+        <source>/boost/function//boost_function
+        <source>/boost/mpl//boost_mpl
+        <source>/boost/smart_ptr//boost_smart_ptr
+        <source>/boost/static_assert//boost_static_assert
+        <source>/boost/thread//boost_thread
+        <source>/boost/type_traits//boost_type_traits
+        <include>include
+    ;
+
+explicit
+    [ alias boost_statechart ]
+    [ alias all : boost_statechart example test ]
+    ;
+
+call-if : boost-library statechart
+    ;
