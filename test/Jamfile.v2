@@ -7,6 +7,7 @@
 project libs/statechart/test
     : requirements
         <include>.
+        <library>/boost/optional//boost_optional
     ;
 
 local test_monitor =
