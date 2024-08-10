@@ -6,6 +6,7 @@
 
 project libs/statechart/test
     : requirements
+        <library>/boost/statechart//boost_statechart
         <include>.
         <library>/boost/optional//boost_optional
     ;

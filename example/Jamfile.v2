@@ -4,7 +4,8 @@
 # ing file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 ##############################################################################
 
-project libs/statechart/example ;
+project libs/statechart/example
+    : requirements <library>/boost/statechart//boost_statechart ;
 
 local custom = <define>CUSTOMIZE_MEMORY_MANAGEMENT ;
 local native = <define>BOOST_STATECHART_USE_NATIVE_RTTI ;
