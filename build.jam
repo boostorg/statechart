@@ -20,15 +20,13 @@ constant boost_dependencies :
     /boost/type_traits//boost_type_traits ;
 
 project /boost/statechart
-    : common-requirements
-        <include>include
     ;
 
 explicit
-    [ alias boost_statechart : : : : <library>$(boost_dependencies) ]
+    [ alias boost_statechart : : :
+        : <include>include <library>$(boost_dependencies) ]
     [ alias all : boost_statechart example test ]
     ;
 
 call-if : boost-library statechart
     ;
-
